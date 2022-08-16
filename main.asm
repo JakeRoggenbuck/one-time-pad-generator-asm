@@ -1,27 +1,29 @@
-SECTION .data
-msg     db      'Longer message with unknown length', 0Ah
- 
-SECTION .text
-global  _start
- 
+extern printf
+extern rand
+extern _exit
+extern srand
+
+section .data
+	form:  db '%d', 10
+
+section .text
+	global	_start
+
 _start:
-	mov ebx, 	msg				; set ebx to addr of msg
-	mov eax, 	ebx				; set eax to the same
+	call	srand		; seed the random number
+	call 	rand		; generate a random number save to eax
+	mov		ebx, 9		; move max random num to ebx
 
-nextchar:
-	cmp 		byte [eax], 0	; compare the byte pointed to by eax to zero (end of line)
-	jz			finished		; jump if zero to finished section
-	inc 		eax				; increment eax if no zero flag
-	jmp 		nextchar		; jump to nextchar section
+	mov 	edx, 0		
+	div		ebx			; divide by ebx (9)
+	mov 	eax, edx	; move the remainder of div to eax
+	add		eax, 1		; add one to eax
 
- finished:
- 	sub			eax, ebx		; eax - ebx
-	mov 		edx, eax		; eax is the number of bytes in msg
-	mov			ecx, msg		; move msg to ecx
-	mov			ebx, 1
-	mov			eax, 4
-	int			80h
+	mov 	esi, eax	; move number in place for printf
+	mov 	edi, form	; move form in place as well
 
-	mov			ebx, 0
-	mov			eax, 1
-	int			80h
+	call 	printf
+
+	mov 	rax, 0
+	jmp 	_exit
+
