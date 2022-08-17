@@ -10,7 +10,16 @@ section .text
 	global	_start
 
 _start:
+	mov		rbx, 6
 	call	srand		; seed the random number
+
+before:
+	cmp 	rbx, 0
+	jnz		notzero
+						; zero
+	jmp		after_notzero
+
+notzero:
 	call 	rand		; generate a random number save to eax
 	mov		ebx, 9		; move max random num to ebx
 
@@ -23,7 +32,10 @@ _start:
 	mov 	edi, form	; move form in place as well
 
 	call 	printf
+	sub		rbx, 1
+
+after_notzero:
+	jmp 	before
 
 	mov 	rax, 0
 	jmp 	_exit
-
