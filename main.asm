@@ -4,38 +4,37 @@ extern _exit
 extern srand
 
 section .data
-	form:  db '%d', 10
+	form:  db '%d'
 
 section .text
 	global	_start
 
 _start:
-	mov		rbx, 6
-	call	srand		; seed the random number
+	mov		rcx, 6
+	call	srand			; seed the random number
 
 before:
-	cmp 	rbx, 0
+	cmp 	rcx, 0
 	jnz		notzero
-						; zero
-	jmp		after_notzero
+	; zero
+	cmp		rcx, 0
+	je 		exit_prog
 
 notzero:
-	call 	rand		; generate a random number save to eax
-	mov		ebx, 9		; move max random num to ebx
+	sub		rcx, 1
+	call 	rand			; generate a random number save to eax
+	mov		ebx, 9			; move max random num to ebx
 
 	mov 	edx, 0		
-	div		ebx			; divide by ebx (9)
-	mov 	eax, edx	; move the remainder of div to eax
-	add		eax, 1		; add one to eax
+	div		ebx				; divide by ebx (9)
+	mov 	eax, edx		; move the remainder of div to eax
+	add		eax, 1			; add one to eax
 
-	mov 	esi, eax	; move number in place for printf
-	mov 	edi, form	; move form in place as well
-
+	mov		esi, eax
+	mov 	edi, form
 	call 	printf
-	sub		rbx, 1
-
-after_notzero:
 	jmp 	before
 
+exit_prog:
 	mov 	rax, 0
 	jmp 	_exit
